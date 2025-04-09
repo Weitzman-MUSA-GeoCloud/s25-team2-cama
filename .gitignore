@@ -13,3 +13,8 @@ data/
 
 # Sensitive files
 keys/
+
+package-lock.json
+
+raw_data/*
+prepared_data/*
