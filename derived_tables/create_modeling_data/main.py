@@ -9,7 +9,7 @@ load_dotenv()
 print("Cloud Function is starting up...")
 
 DIR_NAME = pathlib.Path(__file__).parent
-DERIVED_SQL_PATH = DIR_NAME / 'sql' / 'derived_phl_opa_properties_clean.sql'
+DERIVED_SQL_PATH = DIR_NAME / 'sql' / 'derived_current_assessments_model_training_data.sql'
 
 def ensure_datasets(client):
     """Create derived dataset if it doesn't exist"""
@@ -27,7 +27,7 @@ def ensure_datasets(client):
             client.create_dataset(dataset, timeout=30)
 
 @functions_framework.http
-def run_sql_opa_properties_clean(request):
+def run_create_modeling_data(request):
     client = bigquery.Client()
     
     # Run SQL
@@ -56,9 +56,3 @@ def run_sql(client, sql_path):
         error = f"Error in {sql_path.name}: {str(e)}"
         print(error)
         return error, 500
-
-if __name__ == '__main__':
-    from functions_framework import create_app
-    app = create_app(target=run_sql_opa_properties_clean)
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)

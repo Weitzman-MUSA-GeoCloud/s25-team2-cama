@@ -1,0 +1,20 @@
+main:
+  params: [input]
+  steps:
+  - loadOpaPropertiesClean:
+      call: http.post
+      args:
+        url: 'https://run-sql-opa-properties-clean-2j4mmydunq-uk.a.run.app'
+        auth:
+          type: OIDC
+        headers:
+          Content-Type: application/json
+
+  - createModelingData:
+      call: http.post
+      args:
+        url: 'https://run-create-modeling-data-2j4mmydunq-uk.a.run.app'
+        auth:
+          type: OIDC
+        headers:
+          Content-Type: application/json

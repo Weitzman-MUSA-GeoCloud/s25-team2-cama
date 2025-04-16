@@ -14,5 +14,5 @@ gcloud functions deploy run_sql_opa_properties_clean \
   ```
 
 ```shell
-gcloud functions call run_sql_septa --region=us-east4
+gcloud functions call run_sql_opa_properties_clean --region=us-east4
 ```

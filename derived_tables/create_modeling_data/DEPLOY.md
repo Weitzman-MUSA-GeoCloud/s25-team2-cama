@@ -1,10 +1,10 @@
 ```shell
-gcloud functions deploy run_sql_septa \
+gcloud functions deploy run_create_modeling_data \
 --gen2 \
 --region=us-east4 \
 --runtime=python312 \
---source=clean_opa_properties_table/ \
---entry-point=run_sql_opa_properties_clean \
+--source=create_modeling_data/ \
+--entry-point=run_create_modeling_data \
 --service-account=data-pipeline-robot-claudia@musa5090s25-team2.iam.gserviceaccount.com \
 --memory=8Gi \
 --timeout=480s \
@@ -14,5 +14,5 @@ gcloud functions deploy run_sql_septa \
   ```
 
 ```shell
-gcloud functions call run_sql_septa --region=us-east4
+gcloud functions call run_create_modeling_data --region=us-east4
 ```
