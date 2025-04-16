@@ -21,7 +21,8 @@ selected_data AS (
     `year_built`,
     `zoning`,
     `owner_1`,
-    `geog`
+    --Get actual geography out of string
+    ST_GEOGFROMTEXT(geog) as geog
   FROM `musa5090s25-team2.core.phl_opa_properties`
 ),
 
@@ -200,7 +201,8 @@ ready AS (
     CAST(year_built AS INTEGER) AS year_built,
     total_area,
     zoning,
-    ST_GEOGFROMTEXT(geog) as geog,
+    --Reverse geography long/lat
+    st_geogpoint(st_y(geog), st_x(geog)) as geog    
   FROM imputed
 )
 
