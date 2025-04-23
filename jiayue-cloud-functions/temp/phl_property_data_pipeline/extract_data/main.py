@@ -11,8 +11,8 @@ from google.cloud import storage
 DATA_DIR = pathlib.Path(__file__).parent
 
 @functions_framework.http
-def extract_phl_opa_properties(requests):
-    print('Extracting PHL OPA Properties data')
+def extract_phl_opa_properties(request):
+    print('Extracting PHL OPA Properties data...')
     # Download the OPA Properties data as a CSV
     url = 'https://opendata-downloads.s3.amazonaws.com/opa_properties_public.csv'
     filename = DATA_DIR / 'phl_opa_properties.csv'
@@ -36,4 +36,4 @@ def extract_phl_opa_properties(requests):
 
     print(f'Uploaded {filename} to gs://{bucket_name}/{blobname}')
 
-    return f'Downloaded and uploaded gs://{BUCKET_NAME}/{blobname}'
+    return f'Downloaded and uploaded gs://{bucket_name}/{blobname}'

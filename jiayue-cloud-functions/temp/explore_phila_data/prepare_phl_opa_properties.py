@@ -16,18 +16,18 @@ raw_filename = RAW_DATA_DIR / 'phl_opa_properties.csv'
 prepared_filename = PREPARED_DATA_DIR / 'phl_opa_properties.jsonl'
 
 # Connecting to bucket
-bucket_name = os.getenv('RAW_DATA_BUCKET')
+raw_bucket_name = os.getenv('RAW_DATA_BUCKET')
 storage_client = storage.Client()
-bucket = storage_client.bucket(bucket_name)
+raw_bucket = storage_client.bucket(raw_bucket_name)
 
 # Download the raw data from the bucket
 raw_blobname = 'phl_opa_properties/phl_opa_properties.csv'
-blob = bucket.blob(raw_blobname)
+blob = raw_bucket.blob(raw_blobname)
 blob.download_to_filename(raw_filename)
 print(f'Downloaded to {raw_filename}')
 
 # Load the data from the CSV file
-with open(raw_filename, 'r') as f:
+with open(raw_filename, 'r', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     data = list(reader)
 
@@ -56,5 +56,5 @@ prep_bucket = storage_client.bucket(prep_bucket_name)
 # Upload the prepared data to the prepared bucket
 prepared_blobname = 'phl_opa_properties/phl_opa_properties.jsonl'
 blob = prep_bucket.blob(prepared_blobname)
-blob.upload_from_filename(prepared_filename)
+blob.upload_from_filename(prepared_filename, timeout=300)
 print(f'Uploaded to {prepared_blobname}')
