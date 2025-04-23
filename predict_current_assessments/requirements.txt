@@ -1,5 +1,5 @@
-numpy==2.2.5
+functions_framework==3.8.2
 pandas==2.2.3
 pandas_gbq==0.28.0
+python-dotenv==1.1.0
 scikit_learn==1.6.1
-scipy==1.15.2
