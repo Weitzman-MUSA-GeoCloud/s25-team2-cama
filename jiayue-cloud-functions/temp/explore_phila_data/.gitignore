@@ -13,3 +13,8 @@ data/
 
 # Service account credentials
 keys/
+
+package-lock.json
+
+raw_data/*
+prepared_data/*
