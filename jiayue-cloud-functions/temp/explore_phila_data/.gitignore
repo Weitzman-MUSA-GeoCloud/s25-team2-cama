@@ -1,0 +1,20 @@
+# Editor and IDE files
+.DS_Store
+.vscode/
+
+# Environments and dependencies
+.env
+*.pyc
+env/
+node_modules/
+
+# Data
+data/
+
+# Service account credentials
+keys/
+
+package-lock.json
+
+raw_data/*
+prepared_data/*
