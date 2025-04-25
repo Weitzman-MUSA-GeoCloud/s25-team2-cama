@@ -1,6 +1,7 @@
 # Import packages
 import pandas as pd
-import datetime
+import tqdm
+from datetime import datetime
 
 from dotenv import load_dotenv
 import pandas_gbq
@@ -11,6 +12,7 @@ from sklearn import ensemble
 # Load environment variables
 load_dotenv()
 print("Cloud Function is starting up...")
+
 
 def run_model(project_id):
 
@@ -47,11 +49,11 @@ def run_model(project_id):
 
     pd.options.mode.copy_on_write = True
     train_predictors = data_modeling[categorical_columns_subset + numerical_columns_subset]
-    train_predictors[categorical_columns_subset] = X[categorical_columns_subset].astype("category")
+    train_predictors[categorical_columns_subset] = train_predictors[categorical_columns_subset].astype("category")
     train_target = data_modeling['sale_price']
 
     production_predictors = data_raw[categorical_columns_subset + numerical_columns_subset]
-    production_predictors[categorical_columns_subset] = X[categorical_columns_subset].astype("category")
+    production_predictors[categorical_columns_subset] = production_predictors[categorical_columns_subset].astype("category")
 
     # Specify model with optimized hyperparameters
     model_production = ensemble.HistGradientBoostingRegressor(
@@ -68,11 +70,11 @@ def run_model(project_id):
     prediction = model_production.predict(production_predictors)
 
     # Prepare output
-    datetime = datetime.now()
+    now = datetime.now()
 
     ready = data_raw
     ready['predicted_value'] = prediction
-    ready['predicted_at'] = datetime
+    ready['predicted_at'] = now
 
     # Create or replace output table on BigQuery
     pandas_gbq.to_gbq(
