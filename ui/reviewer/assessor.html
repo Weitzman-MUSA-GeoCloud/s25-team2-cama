@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mass Appraisal Reviewer</title>
+  <link rel="stylesheet" href="style_assesor.css" />
+  <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+  <style>
+    .phila-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #0f4d90;
+      padding: 14px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-family: 'Open Sans', sans-serif;
+      position: relative;
+    }
+
+    .phila-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background-color: #25cef7;
+    }
+
+    .phila-header .logo img {
+      height: 45px;
+      max-width: 100%;
+      margin-top: 1px;
+      margin-left: 10px;
+      object-fit: contain;
+    }
+
+    .phila-header .title {
+      font-size: 29px;
+      font-weight: 575;
+      color: #ffffff;
+      margin-right: 955px;
+      margin-bottom: 15px;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    .phila-footer {
+      background-color: #0f4d90;
+      padding: 4px;
+      height: 19px;
+      margin-top: 22px;
+      font-family: 'Monserrat', sans-serif;
+      box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+      position: static;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border: 0px solid #ccc;
+    }
+
+    .map-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: white;
+      padding: 6px 10px;
+      font-size: 14px;
+      z-index: 1;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      font-family: 'Open Sans', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <header class="phila-header">
+    <div class="logo">
+      <img src="city-of-philadelphia-logo.6fc34e99.png" alt="City of Philadelphia">
+    </div>
+    <div class="title">Mass Appraisal Reviewer</div>
+  </header>
+
+  <div class="container">
+    <section class="summary">
+      <h1>Mass Appraisal Reviewer</h1>
+      <p>
+        There were <strong>350,626</strong> properties that increased in assessed value since the last
+        mass appraisal. Overall, each property assessment changed by an <strong>increase of 23.6% on average</strong>.
+      </p>
+      <div class="charts">
+        <div class="chart"><h3>Current assessment value distribution…</h3><canvas id="chart1"></canvas></div>
+        <div class="chart"><h3>Prior-year assessment value distribution…</h3><canvas id="chart2"></canvas></div>
+        <div class="chart"><h3>Absolute change in assessment value…</h3><canvas id="chart3"></canvas></div>
+        <div class="chart"><h3>Percent change in assessment value…</h3><canvas id="chart4"></canvas></div>
+      </div>
+    </section>
+
+    <section class="map">
+      <div class="map-toggle">
+        <label><input type="checkbox" id="toggleSatellite" /> Satellite View</label>
+      </div>
+      <div id="map"></div>
+      <div class="map-legend">
+        <ul>
+          <li><input type="checkbox" id="current-values" /> <label for="current-values">Current absolute assessment $ values</label></li>
+          <li><input type="checkbox" id="year2023-values" /> <label for="year2023-values">Tax year 2023 absolute assessment $ values</label></li>
+          <li><input type="checkbox" id="percent-change" checked /> <label for="percent-change">Change (%) in assessment since tax year 2023</label></li>
+          <li><input type="checkbox" id="dollar-change" /> <label for="dollar-change">Change ($) in assessment since tax year 2023</label></li>
+        </ul>
+      </div>
+      <div class="tooltip">
+        <strong>1234 Sesame St</strong><br />
+        <span>Current: $275,400</span><br />
+        <span>2023: $225,200</span><br />
+        <span>Change: ↑ 22.3%</span>
+      </div>
+    </section>
+  </div>
+
+  <footer class="phila-footer">
+    <div class="footer-content">
+      <p> City of Philadelphia | How to use | Feedback </p>
+    </div>
+  </footer>
+
+  <script>
+    // Chart setup
+    const fakeData = {
+      currentAssessment: [100, 200, 300, 400, 500],
+      priorYearAssessment: [90, 180, 270, 360, 450],
+      absoluteChange: [10, 20, 30, 40, 50],
+      percentChange: [10, 10, 10, 10, 10],
+    };
+
+    function drawBarChart(canvasId, data, label) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['A', 'B', 'C', 'D', 'E'],
+          datasets: [{
+            label: label,
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function drawLineChart(canvasId, data, label) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['A', 'B', 'C', 'D', 'E'],
+          datasets: [{
+            label: label,
+            data: data,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    window.onload = function () {
+      drawBarChart('chart1', fakeData.currentAssessment, 'Current Assessment Value');
+      drawBarChart('chart2', fakeData.priorYearAssessment, 'Prior Year Assessment Value');
+      drawBarChart('chart3', fakeData.absoluteChange, 'Absolute Change');
+      drawLineChart('chart4', fakeData.percentChange, 'Percent Change');
+    };
+
+    // Map setup
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          arcgisBase: {
+            type: 'raster',
+            tiles: ['https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services/CityBasemap/MapServer/tile/{z}/{y}/{x}'],
+            tileSize: 256,
+            attribution: '&copy; City of Philadelphia / Esri'
+          },
+          arcgisLabels: {
+            type: 'raster',
+            tiles: ['https://tiles.arcgis.com/tiles/fLeGjb7u4uXqeF9q/arcgis/rest/services/CityBasemap_Labels/MapServer/tile/{z}/{y}/{x}'],
+            tileSize: 256,
+            attribution: '&copy; City of Philadelphia / Esri'
+          },
+          satellite: {
+            type: 'raster',
+            tiles: ['https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+            tileSize: 256,
+            attribution: '&copy; Esri, Maxar, Earthstar Geographics'
+          },
+          properties: {
+            type: 'vector',
+            tiles: ['https://storage.googleapis.com/musa5090s25-team2-public/tiles/properties/{z}/{x}/{y}.pbf'],
+            minzoom: 2,
+            maxzoom: 30
+          }
+        },
+        layers: [
+          {
+            id: 'basemap',
+            type: 'raster',
+            source: 'arcgisBase',
+            minzoom: 0,
+            maxzoom: 19
+          },
+          {
+            id: 'satellite',
+            type: 'raster',
+            source: 'satellite',
+            layout: { visibility: 'none' },
+            minzoom: 0,
+            maxzoom: 19
+          },
+          {
+            id: 'property-fill',
+            type: 'fill',
+            source: 'properties',
+            'source-layer': 'property_tile_info',
+            paint: {
+              'fill-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'current_assessed_value'],
+                0, '#e8eef1',
+                25000, '#bfdff1',
+                50000, '#abd7f1',
+                100000, '#96cff1',
+                250000, '#6dc0f1',
+                500000, '#43b0f1',
+                750000, '#1e3d58',
+                1000000, '#1e3d58'
+              ],
+              'fill-opacity': 0.6
+            }
+          },
+          {
+            id: 'property-outline',
+            type: 'line',
+            source: 'properties',
+            'source-layer': 'property_tile_info',
+            paint: {
+              'line-color': '#1e3d58',
+              'line-width': 0.5
+            }
+          },
+          {
+            id: 'labels',
+            type: 'raster',
+            source: 'arcgisLabels',
+            minzoom: 0,
+            maxzoom: 19
+          }
+        ]
+      },
+      center: [-75.1652, 39.9526],
+      zoom: 13
+    });
+
+    document.getElementById('toggleSatellite').addEventListener('change', function (e) {
+      const showSatellite = e.target.checked;
+      map.setLayoutProperty('satellite', 'visibility', showSatellite ? 'visible' : 'none');
+      map.setLayoutProperty('basemap', 'visibility', showSatellite ? 'none' : 'visible');
+    });
+  </script>
+</body>
+</html>
