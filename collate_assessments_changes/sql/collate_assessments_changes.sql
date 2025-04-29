@@ -68,6 +68,22 @@ assessments_addresses AS (
   FROM assessments_changes
   LEFT JOIN property_addresses
   ON assessments_changes.property_id=property_addresses.property_id_addresses
+),
+
+# Get property geographies
+property_geogs AS (
+  SELECT 
+    property_id AS property_id_geogs,
+    geog
+  FROM `musa5090s25-team2.derived.phl_opa_properties_clean`
+),
+
+# Join in property geographies
+ready AS (
+  SELECT * EXCEPT (property_id_geogs)
+  FROM assessments_addresses
+  LEFT JOIN property_geogs
+  ON assessments_addresses.property_id=property_geogs.property_id_geogs
 )
 
-SELECT * FROM assessments_addresses;
+SELECT * FROM ready;
