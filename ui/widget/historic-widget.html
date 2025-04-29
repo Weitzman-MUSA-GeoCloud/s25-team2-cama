@@ -3,33 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f4d90">
   <title>Historical Assessment Widget</title>
   <link rel="stylesheet" href="historic-style.css">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js library -->
+  
 </head>
 <body>
   <header id="page-header">
-    <img src="city-of-philadelphia-yellow-white.png" alt="Logo" id="header-logo">
+    <a href="https://www.phila.gov" target="_blank">
+      <img src="city-of-philadelphia-yellow-white.png" alt="Logo" id="header-logo">
+    </a>
     <h1>Historical Assessment Value</h1>
   </header>
   
   <div id="header-stripe"></div> <!-- Stripe directly after the header -->
 
-<div class="widget-container">
-  <h1>Property Lookup</h1>
-
-  <form id="opa-form">
-    <label for="opa-id">Enter OPA ID</label>
-    <input id="opa-id" type="text" placeholder="e.g., 884201000" required>
+  <div class="widget-container">
+    <h1>Property Lookup</h1>
   
-    <button type="submit" id="search-button"></button>
-  </form>
+    <form id="opa-form">
+      <label for="opa-id">Enter OPA ID</label>
+      <input id="opa-id" type="text" placeholder="e.g., 884201000" required>
+      <button type="submit" id="search-button"></button>
+    </form>
+  
+    <div id="intro-message">
+      <p>Use the Historical Assessment Value tool to get information about your property. Check your property's historical market value, taxable and exempt portions, and year-over-year changes.</p>
+    </div>
 
-  <div id="results"></div>
-</div>
+    <div id="intro-paragraph1">
+      <p>To get started, you can:</p>
+    </div>
 
-<script src="historic.js"></script>
+    <div id="intro-paragraph2">
+      <p>⌕ Search on property information</p>
+    </div>
+
+    <div id="intro-paragraph3">
+      <p>Type your OPA ID (i.e., property/parcel ID) in the search box above and click the button or press enter.</p>
+    </div>
+
+    <div id="intro-paragraph4">
+      <p>*Property Search is no longer allowing Search By Owner due to privacy concerns.</p>
+    </div>
+  
+    <div id="results"></div>
+  </div>
+
+<script src="main.js"></script>
+
+<footer id="page-footer">
+  <p>
+    <a href="https://www.phila.gov" target="_blank">City of Philadelphia</a>  |
+    <a href="https://www.phila.gov/opa" target="_blank">How to use</a>  |
+    <a href="https://www.phila.gov/privacy" target="_blank">Feedback</a>
+  </p>
+</footer>
 
 </body>
 </html>
