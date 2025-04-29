@@ -1,7 +1,6 @@
 # Node or Python generated files
 env/
 *.pyc
-__pycache__
 
 # Data generated while testing
 *.[csv|zip|gpkg|json|jsonl]

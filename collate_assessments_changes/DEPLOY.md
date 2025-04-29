@@ -15,5 +15,5 @@ gcloud functions deploy collate_assessments_changes \
   ```
 
 ```shell
-gcloud functions call collate_assessments_changes --region=us-east4
+gcloud functions call collate_assessments_changes --region=us-east4 --project=musa5090s25-team2
 ```
