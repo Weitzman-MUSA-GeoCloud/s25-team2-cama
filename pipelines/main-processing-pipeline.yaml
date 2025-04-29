@@ -1,0 +1,307 @@
+
+main:
+    params: [input]
+    steps:
+        # EtL on initial datasets, each dataset processed in parallel
+        - createInitialBigQueryTables:
+            parallel:
+                branches:
+                    - opaAssessments:
+                        steps:
+                            - extract_opa_assessment_data:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_opa_assessment'
+                                    auth:
+                                        type: OIDC
+                            - prepare_opa_assessment_data:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_opa_assessment'
+                                    auth:
+                                        type: OIDC
+                            - run_sql_source_opa_assessment:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_opa_assessment'
+                                    query:
+                                        sql: 'sql/source_opa_assessment.sql'
+                                    auth:
+                                        type: OIDC
+                            - run_sql_core_opa_assessment:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_opa_assessment'
+                                    query:
+                                        sql: 'sql/core_opa_assessment.sql'
+                                    auth:
+                                        type: OIDC
+                    - opaProperties:
+                        steps:
+                            - extract_opa_properties_data:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_opa_properties'
+                                    auth:
+                                        type: OIDC
+                            - prepare_opa_properties_data:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_opa_properties'
+                                    auth:
+                                        type: OIDC
+                            - run_sql_source_opa_properties:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_opa_properties'
+                                    query:
+                                        sql: 'sql/source_opa_properties.sql'
+                                    auth:
+                                        type: OIDC
+                            - run_sql_core_opa_properties:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_opa_properties'
+                                    query:
+                                        sql: 'sql/core_opa_properties.sql'
+                                    auth:
+                                        type: OIDC
+                    - pwdParcels:
+                        steps:
+                            - extract_phl_pwd_parcels:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_phl_pwd_parcels'
+                                    auth:
+                                        type: OIDC
+                            - prepare_pwd_parcels:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_pwd_parcels'
+                                    auth:
+                                        type: OIDC
+                            - run_sql_source_pwd_parcels:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_pwd_parcels'
+                                    query:
+                                        sql: 'sql/source_pwd_parcels.sql'
+                                    auth:
+                                        type: OIDC
+                            - run_sql_core_pwd_parcels:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_pwd_parcels'
+                                    query:
+                                        sql: 'sql/core_pwd_parcels.sql'
+                                    auth:
+                                        type: OIDC
+                    - neighborhoods:
+                        steps:
+                            - extractPhlNeighborhoodsData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_phl_neighborhoods'
+                                    auth:
+                                        type: OIDC
+                            - preparePhlNeighborhoodsData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_phl_neighborhoods'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlNeighborhoodsSourceData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_neighborhoods'
+                                    query:
+                                        sql: 'run_sql_neighborhoods/sql/source_phl_neighborhoods.sql'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlNeighborhoodsCoreData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_neighborhoods'
+                                    query:
+                                        sql: 'run_sql_neighborhoods/sql/core_phl_neighborhoods.sql'
+                                    auth:
+                                        type: OIDC                    
+                    - parks:
+                        steps:
+                            - extractPhlParksData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_phl_parks'
+                                    auth:
+                                        type: OIDC
+                            - preparePhlParksData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_phl_parks'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlParksSourceData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_parks'
+                                    query:
+                                        sql: 'run_sql_parks/sql/source_phl_parks.sql'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlParksCoreData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_parks'
+                                    query:
+                                        sql: 'run_sql_parks/sql/core_phl_parks.sql'
+                                    auth:
+                                        type: OIDC                    
+                    - schools:
+                        steps:
+                            - extractPhlSchoolsData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_phl_schools'
+                                    auth:
+                                        type: OIDC
+                            - preparePhlSchoolsData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_phl_schools'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlSchoolsSourceData:
+                                    call: http.get
+                                    args:
+                                        url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_schools'
+                                        query:
+                                            sql: 'run_sql_schools/sql/source_phl_schools.sql'
+                                        auth:
+                                            type: OIDC
+                            - loadPhlSchoolsCoreData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_schools'
+                                    query:
+                                        sql: 'run_sql_schools/sql/core_phl_schools.sql'
+                                    auth:
+                                        type: OIDC                    
+                    - septa:
+                        steps:
+                            - extractPhlSeptaData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/extract_phl_septa'
+                                    auth:
+                                        type: OIDC
+                            - preparePhlSeptaData:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/prepare_phl_septa'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlSeptaSourceData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_septa'
+                                    query:
+                                        sql: 'run_sql_septa/sql/source_phl_septa.sql'
+                                    auth:
+                                        type: OIDC
+                            - loadPhlSeptaCoreData:
+                                call: http.get
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_septa'
+                                    query:
+                                        sql: 'run_sql_septa/sql/core_phl_septa.sql'
+                                    auth:
+                                        type: OIDC
+        # Clean OPA properties data and subset to residential properties
+        - loadOpaPropertiesClean:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_opa_properties_clean'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
+        # Join all predictors for modeling, label records to be used for model training
+        - createModelingData:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_create_modeling_data'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
+        # Run model and write out predicted results
+        - runModel:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/predict_current_assessments'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
+        # Collate assessment values from historic years + predicted
+        - collateAssessments:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/collate-assessments-changes'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
+        # Export collated table to public Cloud Storage bucket
+        - exportCollatedAssessments:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/export-assessments-changes'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
+        # Generate clean properties GeoJSON from collated assessments
+        - generateCleanPropertiesGeojson:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/generate-clean-properties-geojson'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
+        # Binned assessments
+        - binAssessments:
+            parallel:
+                branches:
+                    - binCurrentAssessments:
+                        steps:
+                            - createCurrentAssessmentsBins:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_derived-current_assessments'
+                                    auth:
+                                        type: OIDC
+                                    headers:
+                                        Content-Type: application/json
+                            - exportCurrentAssessmentsBins:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/generate-assessment-chart-configs'
+                                    auth:
+                                        type: OIDC
+                                    headers:
+                                        Content-Type: application/json
+                    - binPreviousAssessments:
+                        steps:
+                            # PLACEHOLDER: createPreviousAssessmentsBins:
+                            - exportPreviousAssessmentsBins:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/previous_generate-assessment-chart-configs'
+                                    auth:
+                                        type: OIDC
+                                    headers:
+                                        Content-Type: application/json
+
+                        
