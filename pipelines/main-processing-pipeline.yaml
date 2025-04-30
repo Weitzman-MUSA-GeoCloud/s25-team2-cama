@@ -294,7 +294,14 @@ main:
                                         Content-Type: application/json
                     - binPreviousAssessments:
                         steps:
-                            # PLACEHOLDER: createPreviousAssessmentsBins:
+                            - createPreviousAssessmentsBins:
+                                call: http.post
+                                args:
+                                    url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/run_sql_derived-previous_assessments'
+                                    auth:
+                                        type: OIDC
+                                    headers:
+                                        Content-Type: application/json
                             - exportPreviousAssessmentsBins:
                                 call: http.post
                                 args:
@@ -303,5 +310,14 @@ main:
                                         type: OIDC
                                     headers:
                                         Content-Type: application/json
+        # Chart data metadata for styling
+        - chartMetadata:
+            call: http.post
+            args:
+                url: 'https://us-east4-musa5090s25-team2.cloudfunctions.net/generate-style-metadata'
+                auth:
+                    type: OIDC
+                headers:
+                    Content-Type: application/json
 
                         
