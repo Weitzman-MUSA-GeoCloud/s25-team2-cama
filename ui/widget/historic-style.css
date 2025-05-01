@@ -21,6 +21,7 @@
   flex-wrap: wrap;
   align-items: center;
   margin-bottom: 1.5rem;
+  margin-top: 3rem;
 }
 
 #opa-form label {
@@ -28,6 +29,10 @@
   font-weight: 600;
   margin-right: 0.5rem;
   color: #444444;
+  background: #f0f0f0; 
+  padding: .94rem;
+  display: flex;
+  align-items: center; 
 }
 
 #opa-id {
@@ -45,6 +50,7 @@
   font-family: 'Montserrat', sans-serif;
   font-weight: 200px;
   color: #444444;
+  margin-top: 3rem;
 }
 
 /* Results section */
@@ -92,18 +98,33 @@ table {
 
 table th, table td {
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1.75px solid #ffffff;
   text-align: left;
 }
 
 table th {
   font-family: 'Open Sans', sans-serif;
-  background-color: #f0f0f0;
+  background-color: #444444;
   font-weight: 600;
+  color: #ffffff;
 }
 
 table tbody tr:nth-child(even) {
-  background-color: #fafafa;
+  background-color: #cfcfcf;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  color: #444444;
+}
+
+table tbody tr:nth-child(odd) {
+  background-color: #f0f0f0;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  color: #444444;
+}
+
+table td:first-child {
+  text-align: center;
 }
 
 /* Error message */
@@ -120,13 +141,22 @@ table tbody tr:nth-child(even) {
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
-  margin-top: -1vw;
+  margin-top: -4.34vw;
   background-color: #0f4d90; /* Blue background */
   color: white; /* White text color */
   padding: 16px; /* Space inside the header */
   text-align: left; /* Center the text */
   font-family: 'Open Sans', sans-serif;
   display: flex;
+}
+
+#page-header a {
+  display: inline-block;
+  transition: opacity 0.5s ease;
+}
+
+#page-header a:hover {
+  opacity: 0.5; /* Slight fade when hovered */
 }
 
 #header-stripe {
@@ -141,31 +171,116 @@ table tbody tr:nth-child(even) {
 }
 
 #header-logo {
-  width: 155px; /* Set the size of the logo image */
-  height: auto; /* Maintain aspect ratio */
-  margin-right: 15px; /* Space between the image and the text */
+  width: 190px; /* Set the size of the logo image */
+  height: auto;
+  margin-left: 5px; /* Maintain aspect ratio */
+  margin-right: 12px; 
+  cursor: pointer; /* Space between the image and the text */
 }
 
 /* Optionally, style the h1 text */
 #page-header h1 {
   margin: 0; /* Remove default margin */
   font-size: 28px; /* Adjust the size of the header text */
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400; 
-  padding-left: 20px;/* Adjust the size of the header text */
+  padding-left: 19px;
+  padding-top: 7px; /* Adjust the size of the header text */
+}
+
+html, body {
+  height: 80%; 
+  box-sizing: border-box; /* Include padding and borders in width and height calculations */
 }
 
 body {
-  margin: 20px;
+  margin: 50px;
   padding: 0;
 }
 
 #search-button {
   background: url('button-search2.png') no-repeat center center;
   background-size: contain;
-  width: 52.5px; /* Adjust size as needed */
+  width: 52.9px; /* Adjust size as needed */
   height: 52px;
   border: none; /* Remove the default border */
   cursor: pointer; /* Hand cursor on hover */
   padding: 0;
+}
+
+#intro-message,
+#intro-paragraph {
+  transition: opacity 0.3s ease;
+}
+
+#intro-message {
+  font-size: 1rem;
+  font-family: 'Open Sans', sans-serif;
+  font-style: italic;
+  color: #444444; 
+  margin-top: 5rem;
+  margin-bottom: 0.5rem;
+  background-color: #DAEDFe;
+  padding: .5rem;
+  line-height: 1.6;
+}
+
+#intro-paragraph1 {
+  font-size: 1.75rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 200px;
+  color: #444444;
+  line-height: 1.5;
+  margin-top: 50px;
+}
+
+#intro-paragraph2 {
+  font-size: 1.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 200px;
+  color: #444444;
+  line-height: 1.5;
+  margin-left: 30px;
+}
+
+#intro-paragraph3 {
+  font-size: 1.1rem;
+  font-family: 'Open Sans', sans-serif;
+  color: #444444;
+  line-height: 1.5;
+  margin-left: 50px;
+}
+
+#intro-paragraph4 {
+  font-size: .9rem;
+  font-family: 'Open Sans', sans-serif;
+  color: #cc3000;
+  line-height: 1.5;
+  margin-left: 50px;
+}
+
+
+#page-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #0f4d90; /* or your preferred color */
+  color: white;
+  text-align: center;
+  padding: .001px;
+  z-index: 100;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+
+#page-footer a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+#page-footer a:hover {
+  color: #25cef7;
 }
