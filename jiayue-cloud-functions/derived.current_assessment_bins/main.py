@@ -27,7 +27,7 @@ def ensure_datasets(client):
             client.create_dataset(dataset, timeout=30)
 
 @functions_framework.http
-def run_sql_derived_current_assessments(request):
+def run_sql_derived-current_assessments(request):
     client = bigquery.Client()
 
 

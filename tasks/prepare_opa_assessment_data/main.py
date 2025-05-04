@@ -13,9 +13,6 @@ load_dotenv()
 
 DIRNAME = pathlib.Path(__file__).parent
 
-RAW_DATA_BUCKET=musa5090s25-team2-raw_data
-PREPARED_DATA_BUCKET=musa5090s25-team2-prepared_data
-
 # Google Cloud Storage details
 BUCKET_NAME_RAW = os.getenv('RAW_DATA_BUCKET')  # Bucket for raw data
 BUCKET_NAME_PREPARED = os.getenv('PREPARED_DATA_BUCKET')  # Bucket for processed data
