@@ -171,7 +171,7 @@ To create the vector tiles for the assessment review dashboard, we use a Cloud R
 
 ## Workflows
 
-For extracting, loading, transforming, and predicting on data, there is a single workflow named `data-pipeline`. This workflow is triggered by a Cloud Scheduler job that runs once per week.
+For extracting, loading, transforming, and predicting on data, there is a single workflow named `main-processing-pipeline`. This workflow is triggered by a Cloud Scheduler job that runs once per week.
 
 ## Service Accounts
 
@@ -182,3 +182,76 @@ In each project, a service account named `data-pipeline-user` was created to pro
 - `Cloud Functions Invoker`
 - `Cloud Run Invoker`
 - `Workflows Invoker`
+
+## Architecture
+
+The project reads in the following sources of data, using the EtL workflow described above:
+
+- OPA assessments values
+- OPA property characteristics
+- PWD parcels information
+- Neighborhood boundaries and names
+- School catchment boundaries and names
+- SEPTA Metro station locations
+- Parks and Recreation facility locations
+	- (This dataset is not used in the modeling)
+	
+From the list of OPA properties, we select out residential properties, using OPA's category code description field. From these properties, we further select properties meeting the following criteria to be part of our training data (other residential properties will still have their values estimated by the model, but will not inform model parameters):
+
+- Sale price over $100
+- Sale date in 2015 or later
+- Sale not part of a bundle of properties sold at the same time to the same buyer with the same price
+
+We then select a suite of OPA variables with reasonable data quality, then impute any remaining missing data based on the most common value (for categorical predictors), or the average (for continuous predictors). The training data also includes external variables loaded above: neighborhood name, school name, and distance to the nearest SEPTA Metro station.
+
+We then create a predictive model using the HistGradientBoostingRegressor estimator from scikit-learn, using recorded sales price as the target and the following variables as the predictors:
+
+- `category_code_description` 
+- `building_code_description_new` 
+- `exterior_condition` 
+- `interior_condition` 
+- `number_of_bathrooms` 
+- `number_of_bedrooms` 
+- `number_stories`
+- `neighborhood` 
+- `school`
+- `zoning`
+- `year_built` 
+- `total_area`     
+- `distance_to_nearest_septa`
+
+We use gamma loss as the loss function of the estimator, given the purely positive values in the target variable. We also use scikit-learn's RandomizedSearchCV function to search the hypermarameter space for optimal values of maximum tree depth and learning rate.
+
+The trained model is then applied in the full residential properties dataset, and the estimated assessment is joined to historical assessment values to generate the data and map tiles necessary for the frontend interface.
+
+## Deployment
+
+Prior to deployment, the project structure (including Cloud Storage buckets, BigQuery datasets, and service account permissions) should be set up as described above.
+
+All of the necessary Cloud Run functions are organized in our processing pipeline, stored under the `pipelines` directory. Each Cloud Run function included in the pipeline should be deployed using the gcloud CLI using the shell scripts included in each function's directory. The pipeline can then be executed or scheduled to generate the tables and analyses used in this project.
+
+Once the data infrastructure is in place, the web interface should be deployed by [TKTKTKTKTKTKTKTK].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
