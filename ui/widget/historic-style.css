@@ -133,6 +133,16 @@ table td:first-child {
   font-weight: 600;
 }
 
+#refresh-title {
+  color: inherit;
+  text-decoration: none;
+}
+
+#refresh-title:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 /* Style for the header with blue background */
 #page-header {
   width: 100vw;

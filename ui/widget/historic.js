@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    const opaId = opaInput.value.trim();
-    if (!opaId) {
+    const property_id = opaInput.value.trim();
+    if (!property_id) {
       resultsSection.innerHTML = '<p>Please enter a valid OPA ID.</p>';
       return;
     }
@@ -40,13 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsSection.innerHTML = '<p>Loading assessment history...</p>';
 
     try {
-      const response = await fetch('tables-phl_opa_assessment-phl_opa_assessment.jsonl');
+      const response = await fetch('phl_opa_assessment_address.json');
       const text = await response.text();
 
       const allLines = text.trim().split('\n');
       const allData = allLines.map(line => JSON.parse(line));
       const filtered = allData
-        .filter(entry => entry.parcel_number === opaId)
+        .filter(entry => {
+          const matchesID = entry.parcel_number?.toString().trim() === property_id;
+          const matchesAddress = entry.location?.toLowerCase().includes(property_id.toLowerCase());
+          return matchesID || matchesAddress;
+        })
         .map(entry => ({
           year: parseInt(entry.year),
           value: parseFloat(entry.market_value),
@@ -145,18 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 drawTicks: false
               }
             },
-          x: {
-            ticks: {
-              font: {
-                size: 12,   
-                family: 'Montserrat'
+            x: {
+              ticks: {
+                font: {
+                  size: 12,   
+                  family: 'Montserrat'
+                }
+              },
+              grid: {
+                display: false,
+                drawTicks: false
               }
-            },
-            grid: {
-              display: false,
-              drawTicks: false
             }
-          }
           },
           plugins: {
             legend: {
@@ -177,12 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
               titleAlign: 'center',  // <<< Center the title text
               bodyAlign: 'center', // Align the tooltip vertically (above the point)
               callbacks: {
-                  label: function(tooltipItem) {
-                      return `$${tooltipItem.raw.toLocaleString()}`;  // Format the value in the tooltip
-                  },
-              title: function(tooltipItem) {
+                label: function(tooltipItem) {
+                  return `$${tooltipItem.raw.toLocaleString()}`;  // Format the value in the tooltip
+                },
+                title: function(tooltipItem) {
                   return `${tooltipItem[0].label} Assessment`;  // Show year as title
-                  }
+                }
               }
             }
           }
