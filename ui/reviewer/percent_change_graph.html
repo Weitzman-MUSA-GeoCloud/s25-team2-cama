@@ -6,7 +6,6 @@
   <title>Assessment Value Percentage Change by Year</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
@@ -62,24 +61,20 @@
             const value = parseFloat(row[columns[index]]) || 0;
             return sum + value;
           }, 0);
-          return total / data.length;
+          const avg = total / data.length;
+          return (avg - 1) * 100; // Convert ratio to % change
         });
+
+        const minY = Math.min(...percentageChanges.map(v => Math.floor(v))) - 1;
+        const maxY = Math.max(...percentageChanges.map(v => Math.ceil(v))) + 1;
 
         const options = {
           chart: {
-            type: 'area',
+            type: 'bar',
             height: 240,
             toolbar: { show: false },
             fontFamily: 'Open Sans, sans-serif',
-            background: 'rgb(240, 240, 240, 0.8)',
-            shadow: {
-              enabled: false,
-              color: 'rgba(0, 0, 0, 0)',
-              top: 0,
-              left: 0,
-              blur: 0,
-              opacity: 0
-            }
+            background: 'rgb(240, 240, 240, 0.8)'
           },
           series: [{
             name: 'Average % Change',
@@ -116,6 +111,8 @@
             }
           },
           yaxis: {
+            min: minY,
+            max: maxY,
             title: {
               text: 'Percentage Change (%)',
               style: {
@@ -126,7 +123,7 @@
               }
             },
             labels: {
-              formatter: val => `${val.toFixed(0)}`,
+              formatter: val => `${val.toFixed(0)}%`,
               style: {
                 color: '#444',
                 fontFamily: 'Open Sans',
@@ -144,23 +141,30 @@
               width: 2
             }
           },
+          annotations: {
+            yaxis: [{
+              y: 0,
+              borderColor: '#444',
+              strokeDashArray: 4,
+              label: {
+                show: false
+              }
+            }]
+          },
           tooltip: {
             y: {
               formatter: val => `${val.toFixed(2)}%`
             }
           },
-          stroke: {
-            curve: 'smooth',
-            width: 3,
-            colors: ['#0f4d90']
+          plotOptions: {
+            bar: {
+              borderRadius: 4,
+              columnWidth: '40%',
+              distributed: false
+            }
           },
-          fill: {
-            type: 'solid',
-            colors: ['#0f4d90'],
-            opacity: 0.3
-          },
+          colors: ['#0f4d90'],
           dataLabels: { enabled: false },
-          markers: { size: 0 },
           grid: {
             show: false
           }
