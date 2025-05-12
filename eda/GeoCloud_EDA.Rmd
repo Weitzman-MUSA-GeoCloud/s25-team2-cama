@@ -1,0 +1,72 @@
+```{r}
+library(tidyverse)
+library(sf)
+library(geojsonio)
+library(skimr)
+options(scipen = 999)
+```
+
+```{r}
+properties <- st_read("opa_properties_public.geojson") %>% st_drop_geometry()
+# quality_grade
+
+residential <- properties %>% 
+  filter(category_code_description %in% c('SINGLE FAMILY',
+    'MULTI FAMILY',
+    'MIXED USE',
+    'APARTMENTS  > 4 UNITS')) %>% 
+    select(
+    `parcel_number`,
+    `sale_price`,
+    sale_date,
+    `category_code_description`,
+    `building_code_description_new`,
+    `exterior_condition`,
+    `interior_condition`,
+    `number_of_bathrooms`,
+    `number_of_bedrooms`,
+    `number_stories`,
+    `total_area`,
+    `year_built`,
+    `zoning`)
+
+```
+
+```{r}
+parcels <- st_read("PWD_PARCELS/PWD_PARCELS.shp") %>% st_make_valid(parcels)  %>%
+  st_transform('EPSG:2272')
+skim(parcels)
+```
+
+```{r}
+schools <- st_read("SchoolDist_Catchments.geojson")
+skim(schools)
+```
+
+```{r}
+neighborhoods <- st_read("philadelphia-neighborhoods.geojson") %>%
+  st_make_valid(neighborhoods) %>%
+  st_transform('EPSG:2272')
+skim(neighborhoods)
+```
+
+```{r}
+parks <- st_read("PPR_Properties.geojson") %>%
+  st_transform('EPSG:2272')
+skim(parks)
+parkdistance <- st_distance(PAdata, parks)
+PAdata$parkdistance <- apply(parkdistance, 1, min)
+
+```
+
+```{r}
+septa <- st_read("septa.geojson") %>%
+  st_transform('EPSG:2272')
+skim(septa)
+```
+
+
+
+
+
+

@@ -9,9 +9,9 @@ print("Cloud Function is starting up...")
 
 
 @functions_framework.http
-def run_sql_derived_previous_assessments(request):
+def run_sql_derived_current_assessment_bins(request):
     # Path to the SQL file
-    sql_file_path = 'create_derived_tax_year_assessment_bins.sql'
+    sql_file_path = 'derived_current_assessment_bins.sql'
 
     # Load the SQL query from the file
     with open(sql_file_path, 'r') as sql_file:

@@ -11,7 +11,7 @@ gcloud functions deploy prepare_opa_assessment `
 --entry-point=prepare_opa_assessment `
 --service-account=data-pipeline-user@musa5090s25-team2.iam.gserviceaccount.com `
 --memory=8Gi `
---timeout=240s `
+--timeout=480s `
 --set-env-vars=RAW_DATA_BUCKET=musa5090s25-team2-raw_data `
 --set-env-vars=PREPARED_DATA_BUCKET=musa5090s25-team2-prepared_data `
 --trigger-http `
