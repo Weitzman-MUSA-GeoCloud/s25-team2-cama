@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mass Appraisal Reviewer</title>
+
+  <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="stylesheet.css" />
+</head>
+<body>
+  <header id="page-header">
+    <a href="https://www.phila.gov" target="_blank">
+      <img src="city-of-philadelphia-logo.6fc34e99.png" alt="Logo" id="header-logo">
+    </a>
+    <h1><a href="#" id="refresh-title">Appraisal</a></h1>
+  </header>
+
+  <div id="header-stripe"></div>
+
+  <div id="controls">
+    <label for="basemap-toggle">Base Map:</label>
+    <select id="basemap-toggle">
+      <option value="stadia">Stadia Alidade Smooth</option>
+      <option value="esri">Esri Satellite</option>
+    </select>
+
+    <label for="metric-toggle">Color by:</label>
+    <select id="metric-toggle">
+      <option value="value_2025">Current Absolute Assessment Value ($)</option>
+      <option value="value_2024">Tax Year 2024 Absolute Assessment Value ($)</option>
+      <option value="change_2024_2025_change_relative">Change (%) In Assessment Since Tax Year</option>
+      <option value="change_2024_2025_absolute">Change ($) In Assessment Since Tax Year</option>
+    </select>
+
+    <label for="search-input">Search the map:</label>
+    <input type="text" id="search-input" placeholder="Search the map" />
+    <button id="search-button">⌕</button>
+  </div>
+
+  <div id="viewer-container">
+    <div id="charts-container">
+      <h2>Mass Appraisal Reviewer</h2>
+      <p><strong>521,832</strong> properties increased in assessed value since the last mass appraisal. Overall, each property assessment changed by an increase of <strong>324.25%</strong> on average.</p>
+      <iframe id="chart" src="index_current_graph.html"></iframe>
+      <iframe id="chart2" src="percent_change_graph.html"></iframe>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <div id="map-legend">
+  <h3>Legend</h3>
+  <div id="legend-items"></div>
+</div>
+
+  <footer id="page-footer">
+    <p>
+      <a href="https://www.phila.gov" target="_blank">City of Philadelphia</a> |
+      <a href="https://www.phila.gov/opa" target="_blank">How to use</a> |
+      <a href="https://www.phila.gov/privacy" target="_blank">Feedback</a>
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js"></script>
+  <script>
+    const baseStyles = {
+      stadia: "https://tiles.stadiamaps.com/styles/alidade_smooth.json",
+      esri: {
+        version: 8,
+        sources: {
+          esri: {
+            type: "raster",
+            tiles: [
+              "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            ],
+            tileSize: 256,
+            attribution: "© Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+          }
+        },
+        layers: [{
+          id: "esri-layer",
+          type: "raster",
+          source: "esri"
+        }]
+      }
+    };
+
+    let currentStyleKey = "stadia";
+    let selectedId = null;
+    let originalCenter = [-75.1652, 39.9526];
+    let originalZoom = 13.5;
+    let currentMetric = "value_2025";
+
+    const colorStops = {
+      value_2025: ['interpolate', ['linear'], ['get', 'value_2025'],
+        0.0, '#bce6f9ff',
+        148200.0, '#74bbedff',
+        219700.0, '#4d96ceff',
+        322000.0, '#48799dff',
+        276892000.0, '#404d54ff'
+      ],
+      value_2024: ['interpolate', ['linear'], ['get', 'value_2024'],
+        0.0, '#f7fcfd',
+        113400.0, '#ccece6',
+        180800.0, '#66c2a4',
+        265400.0, '#238b45',
+        276892000.0, '#00441b'
+      ],
+      change_2024_2025_change_relative: ['interpolate', ['linear'], ['get', 'change_2024_2025_change_relative'],
+        0.0, '#3a4d6bff',
+        1.1374507682810775, '#3d6da2ff',
+        1.2260736296344605, '#799a96ff',
+        1.319221371510145, '#ccbe6aff',
+        20220700.0, '#ffec99ff'
+      ],
+      change_2024_2025_absolute: ['interpolate', ['linear'], ['get', 'change_2024_2025_absolute'],
+        -22500000.0, '#ff9573ff',
+        -11819825.0, '#945e4cff',
+        -1139650.0, '#423b38ff',
+        9540525.0, '#526aadff',
+        20220700.0, '#6690ffff'
+      ]
+    };
+
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: baseStyles[currentStyleKey],
+      center: originalCenter,
+      zoom: originalZoom
+    });
+
+    function addPropertyLayer() {
+      if (!map.getSource('properties')) {
+        map.addSource('properties', {
+          type: 'vector',
+          tiles: ['https://storage.googleapis.com/musa5090s25-team2-public/tiles/properties/{z}/{x}/{y}.pbf']
+        });
+      }
+
+      map.addLayer({
+        id: 'property-layer',
+        type: 'fill',
+        source: 'properties',
+        'source-layer': 'property-tile-info',
+        paint: {
+          'fill-color': colorStops[currentMetric],
+          'fill-outline-color': 'white',
+          'fill-opacity': 0.9
+        }
+      });
+
+      map.addLayer({
+        id: 'property-outline-layer',
+        type: 'line',
+        source: 'properties',
+        'source-layer': 'property-tile-info',
+        paint: {
+          'line-color': 'white',
+          'line-width': 0.5
+        }
+      });
+
+      map.on('click', 'property-layer', (e) => {
+        const feature = e.features[0];
+        const props = feature.properties;
+        selectedId = props.property_id || feature.id || true;
+
+        const popupHtml = `
+          <strong>${props.location || 'N/A'}</strong><br/>
+          <strong>Current:</strong> $${Number(props.value_2025).toLocaleString()}<br/>
+          <strong>2024:</strong> $${Number(props.value_2024).toLocaleString()}<br/>
+          <strong>Change:</strong> ${Number(props.change_2024_2025_change_relative).toFixed(1)}%
+        `;
+
+        const coords = feature.geometry.coordinates[0];
+        const bbox = [
+          [Math.min(...coords.map(c => c[0])), Math.min(...coords.map(c => c[1]))],
+          [Math.max(...coords.map(c => c[0])), Math.max(...coords.map(c => c[1]))]
+        ];
+
+        map.fitBounds(bbox, {
+          padding: 40,
+          maxZoom: 16,
+          duration: 1000
+        });
+
+        new maplibregl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupHtml)
+          .addTo(map);
+      });
+
+      map.on('mouseenter', 'property-layer', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.on('mouseleave', 'property-layer', () => {
+        map.getCanvas().style.cursor = '';
+      });
+    }
+
+    function updateLayerStyle() {
+      if (map.getLayer('property-layer')) {
+        map.setPaintProperty('property-layer', 'fill-color', colorStops[currentMetric]);
+      }
+    }
+
+    map.on('load', () => {
+      originalCenter = map.getCenter();
+      originalZoom = map.getZoom();
+      addPropertyLayer();
+    });
+
+    map.on('click', (e) => {
+      const features = map.queryRenderedFeatures(e.point, { layers: ['property-layer'] });
+      if (features.length === 0 && selectedId !== null) {
+        selectedId = null;
+        map.flyTo({ center: originalCenter, zoom: originalZoom });
+      }
+    });
+
+    document.getElementById('basemap-toggle').addEventListener('change', function () {
+      const selectedKey = this.value;
+      if (selectedKey === currentStyleKey) return;
+
+      const center = map.getCenter();
+      const zoom = map.getZoom();
+      currentStyleKey = selectedKey;
+
+      map.setStyle(baseStyles[selectedKey]);
+
+      map.once('style.load', () => {
+        map.setCenter(center);
+        map.setZoom(zoom);
+        addPropertyLayer();
+      });
+    });
+
+    document.getElementById('metric-toggle').addEventListener('change', function () {
+      currentMetric = this.value;
+      updateLayerStyle();
+    });
+
+    document.getElementById('search-button').addEventListener('click', () => {
+      const input = document.getElementById('search-input').value.trim();
+      if (!input) return alert("Search the map");
+
+      const matches = map.querySourceFeatures('properties', {
+        sourceLayer: 'property-tile-info',
+        filter: ['==', ['get', 'location'], input]
+      });
+
+      if (matches.length > 0) {
+        const feature = matches[0];
+        const props = feature.properties;
+        const coords = feature.geometry.coordinates[0];
+        const bbox = [
+          [Math.min(...coords.map(c => c[0])), Math.min(...coords.map(c => c[1]))],
+          [Math.max(...coords.map(c => c[0])), Math.max(...coords.map(c => c[1]))]
+        ];
+
+        map.fitBounds(bbox, {
+          padding: 40,
+          maxZoom: 16,
+          duration: 1000
+        });
+
+        new maplibregl.Popup()
+          .setLngLat(coords[0])
+          .setHTML(`
+            <strong>${props.location || 'N/A'}</strong><br/>
+            <strong>Current:</strong> $${Number(props.value_2025).toLocaleString()}<br/>
+            <strong>2024:</strong> $${Number(props.value_2024).toLocaleString()}<br/>
+            <strong>Change:</strong> ${Number(props.change_2024_2025_change_relative).toFixed(1)}%
+          `)
+          .addTo(map);
+      } else {
+        alert("Property ID not found in visible tiles. Zoom or pan closer to the area and try again.");
+      }
+    });
+
+  </script>
+</body>
+</html>
