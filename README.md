@@ -230,8 +230,11 @@ Prior to deployment, the project structure (including Cloud Storage buckets, Big
 
 All of the necessary Cloud Run functions are organized in our processing pipeline, stored under the `pipelines` directory. Each Cloud Run function included in the pipeline should be deployed using the gcloud CLI using the shell scripts included in each function's directory. The pipeline can then be executed or scheduled to generate the tables and analyses used in this project.
 
-Once the data infrastructure is in place, the web interface should be deployed by [TKTKTKTKTKTKTKTK].
+Once the data infrastructure is in place, the web interfaces can be built using the processed data (i.e., assessor and historic widget). The websites are built using a mix of HTML, CSS, and JavaScript, and they dynamically load data from the public folder of the Cloud Storage bucket.
 
+To deploy the site, go to the GitHub repository’s Settings > Pages > Build and deployment, and select Deploy from a branch, choosing the main branch and the / (root) directory.
+
+To make the assessor interface live, move the index.html file for the Assessor UI into the root of the main branch so it serves as the homepage of the GitHub Pages deployment.
 
 
 
