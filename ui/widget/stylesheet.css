@@ -1,8 +1,6 @@
-/* Import Open Sans */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 
-/* Overall widget container */
 #opa-widget {
   font-family: 'Open Sans', sans-serif;
   background-color: #ffffff;
@@ -14,7 +12,6 @@
   box-sizing: border-box;
 }
 
-/* Form styles */
 #opa-form {
   font-family: 'Montserrat', sans-serif;
   display: flex;
@@ -53,7 +50,6 @@
   margin-top: 3rem;
 }
 
-/* Results section */
 #results h2 {
   font-family: 'Open Sans', sans-serif;
   background-color: #f0f0f0;
@@ -82,13 +78,11 @@
   text-decoration: none;
 }
 
-/* Chart */
 #assessmentChart {
   font-family: 'Open Sans', sans-serif;
   margin-top: 2rem;
 }
 
-/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -127,7 +121,6 @@ table td:first-child {
   text-align: center;
 }
 
-/* Error message */
 .error {
   color: red;
   font-weight: 600;
@@ -143,7 +136,6 @@ table td:first-child {
   cursor: pointer;
 }
 
-/* Style for the header with blue background */
 #page-header {
   width: 100vw;
   position: relative;
@@ -152,10 +144,10 @@ table td:first-child {
   margin-left: -50vw;
   margin-right: -50vw;
   margin-top: -4.34vw;
-  background-color: #0f4d90; /* Blue background */
-  color: white; /* White text color */
-  padding: 16px; /* Space inside the header */
-  text-align: left; /* Center the text */
+  background-color: #0f4d90; 
+  color: white; 
+  padding: 16px; 
+  text-align: left; 
   font-family: 'Open Sans', sans-serif;
   display: flex;
 }
@@ -166,13 +158,13 @@ table td:first-child {
 }
 
 #page-header a:hover {
-  opacity: 0.5; /* Slight fade when hovered */
+  opacity: 0.5; 
 }
 
 #header-stripe {
-  background-color: #25cef7; /* Slightly darker blue for contrast (optional) */
-  height: 5px; /* Thickness of the stripe */
-  width: 100vw; /* Full screen width */
+  background-color: #25cef7; 
+  height: 5px; 
+  width: 100vw; 
   position: relative;
   left: 50%;
   right: 50%;
@@ -181,26 +173,25 @@ table td:first-child {
 }
 
 #header-logo {
-  width: 190px; /* Set the size of the logo image */
+  width: 190px; 
   height: auto;
-  margin-left: 5px; /* Maintain aspect ratio */
+  margin-left: 5px; 
   margin-right: 12px; 
-  cursor: pointer; /* Space between the image and the text */
+  cursor: pointer; 
 }
 
-/* Optionally, style the h1 text */
 #page-header h1 {
-  margin: 0; /* Remove default margin */
-  font-size: 28px; /* Adjust the size of the header text */
+  margin: 0; 
+  font-size: 28px; 
   font-family: 'Montserrat', sans-serif;
   font-weight: 400; 
   padding-left: 19px;
-  padding-top: 7px; /* Adjust the size of the header text */
+  padding-top: 7px; 
 }
 
 html, body {
   height: 80%; 
-  box-sizing: border-box; /* Include padding and borders in width and height calculations */
+  box-sizing: border-box; 
 }
 
 body {
@@ -211,10 +202,10 @@ body {
 #search-button {
   background: url('button-search2.png') no-repeat center center;
   background-size: contain;
-  width: 52.9px; /* Adjust size as needed */
+  width: 52.9px; 
   height: 52px;
-  border: none; /* Remove the default border */
-  cursor: pointer; /* Hand cursor on hover */
+  border: none; 
+  cursor: pointer; 
   padding: 0;
 }
 
@@ -269,13 +260,12 @@ body {
   margin-left: 50px;
 }
 
-
 #page-footer {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #0f4d90; /* or your preferred color */
+  background-color: #0f4d90; 
   color: white;
   text-align: center;
   padding: .001px;
@@ -284,7 +274,6 @@ body {
   font-weight: bold;
   font-size: 13px;
 }
-
 
 #page-footer a {
   color: #ffffff;
