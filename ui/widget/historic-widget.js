@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    // Hide intro message
     if (introMessage) {
       introMessage.style.opacity = '0';
       setTimeout(() => {
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 20);
     }
 
-    // Hide each intro paragraph
     introParagraphs.forEach(p => {
       if (p) {
         p.style.opacity = '0';
@@ -38,9 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     resultsSection.innerHTML = '<p>Loading assessment history...</p>';
-
+// takes FOREVER to load, simply b/c of all the data ... handling data back to 2015, ~1.5 gb of data. To not cost credits, can download json to local machine ... cannot upload file to github
     try {
-      const response = await fetch('phl_opa_assessment_address.json');
+      const response = await fetch('https://storage.googleapis.com/musa5090s25-team2-public/phl_opa_assessment_address.json');
       const text = await response.text();
 
       const allLines = text.trim().split('\n');
